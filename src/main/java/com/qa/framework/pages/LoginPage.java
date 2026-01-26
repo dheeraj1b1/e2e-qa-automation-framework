@@ -4,15 +4,13 @@ import org.openqa.selenium.By;
 
 public class LoginPage extends BasePage {
 
-    // Locators
     private By usernameField = By.name("username");
     private By passwordField = By.name("password");
     private By loginButton = By.xpath("//button[@type='submit']");
 
-    // Actions
     public LoginPage enterUsername(String username) {
         type(usernameField, username);
-        return this; // Fluent return
+        return this;
     }
 
     public LoginPage enterPassword(String password) {
@@ -22,13 +20,17 @@ public class LoginPage extends BasePage {
 
     public DashboardPage clickLogin() {
         click(loginButton);
-        return new DashboardPage(); // Navigates to the next page
+        return new DashboardPage();
     }
 
-    // Wrapper to do it all at once
     public DashboardPage login(String username, String password) {
         enterUsername(username);
         enterPassword(password);
         return clickLogin();
+    }
+
+    // NEW: Verification method for Logout
+    public boolean isLoginButtonDisplayed() {
+        return isDisplayed(loginButton);
     }
 }
