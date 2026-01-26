@@ -1,0 +1,53 @@
+package com.qa.framework.utils;
+
+import com.aventstack.extentreports.ExtentReports;
+import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.reporter.ExtentSparkReporter;
+import com.aventstack.extentreports.reporter.configuration.Theme;
+import java.io.File; // Import this!
+
+public class ExtentReportManager {
+
+    private static ExtentReports extent;
+    private static ThreadLocal<ExtentTest> test = new ThreadLocal<>();
+
+    public static ExtentReports initReports() {
+        if (extent == null) {
+            String path = System.getProperty("user.dir") + "/reports"; // Folder path
+            File outputDir = new File(path);
+
+            // 1. Check if folder exists, if not, create it!
+            if (!outputDir.exists()) {
+                outputDir.mkdirs();
+            }
+
+            // 2. Attach the report file path
+            ExtentSparkReporter sparkReporter = new ExtentSparkReporter(path + "/ExtentReport.html");
+
+            sparkReporter.config().setTheme(Theme.STANDARD);
+            sparkReporter.config().setReportName("Automation Test Results");
+            sparkReporter.config().setDocumentTitle("QA Framework Report");
+
+            extent = new ExtentReports();
+            extent.attachReporter(sparkReporter);
+            extent.setSystemInfo("OS", System.getProperty("os.name"));
+            extent.setSystemInfo("Java Version", System.getProperty("java.version"));
+        }
+        return extent;
+    }
+
+    public static void flushReports() {
+        if (extent != null) {
+            extent.flush();
+        }
+    }
+
+    public static void createTest(String testName) {
+        ExtentTest extentTest = extent.createTest(testName);
+        test.set(extentTest);
+    }
+
+    public static ExtentTest getTest() {
+        return test.get();
+    }
+}

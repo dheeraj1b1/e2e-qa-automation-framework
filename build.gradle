@@ -1,0 +1,41 @@
+plugins {
+    id 'java'
+}
+
+group = 'com.qa'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // UI Automation
+    implementation 'org.seleniumhq.selenium:selenium-java:4.27.0'
+    implementation 'io.github.bonigarcia:webdrivermanager:5.9.2'
+
+    // API Automation
+    implementation 'io.rest-assured:rest-assured:5.5.0'
+
+    // Test Runner
+    implementation 'org.testng:testng:7.10.2'
+    
+    // Logging & Utilities
+    implementation 'com.aventstack:extentreports:5.1.1'
+    implementation 'org.slf4j:slf4j-simple:2.0.16'
+    compileOnly 'org.projectlombok:lombok:1.18.34'
+    annotationProcessor 'org.projectlombok:lombok:1.18.34'
+
+}
+
+test {
+    useTestNG() {
+        // This tells Gradle: "Don't just scan for files, use my suite file!"
+        suites 'src/test/resources/testng.xml'
+    }
+    
+    // Optional: Shows nice output in the terminal
+    testLogging {
+        events "PASSED", "FAILED", "SKIPPED"
+    }
+}
