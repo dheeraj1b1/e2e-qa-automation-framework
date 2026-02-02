@@ -7,24 +7,27 @@ import java.util.Properties;
 public class ConfigReader {
     private static Properties properties;
 
-    public static void initConfig() {
-        if (properties == null) {
-            try {
-                properties = new Properties();
-                // Load the config.properties file
-                FileInputStream fis = new FileInputStream("src/main/resources/config.properties");
-                properties.load(fis);
-            } catch (IOException e) {
-                throw new RuntimeException("Could not load config.properties file: " +
-                        e.getMessage());
-            }
+    static {
+        try {
+            String path = "src/main/resources/config.properties";
+            FileInputStream input = new FileInputStream(path);
+            properties = new Properties();
+            properties.load(input);
+            input.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Failed to load config.properties");
         }
     }
 
-    public static String get(String key) {
-        if (properties == null) {
-            initConfig();
+    public static String getProperty(String key) {
+        // 1. Check if the value is passed via Command Line (-Dbrowser=firefox)
+        String value = System.getProperty(key);
+
+        // 2. If not, take it from the file
+        if (value == null) {
+            value = properties.getProperty(key);
         }
-        return properties.getProperty(key);
+        return value;
     }
 }
