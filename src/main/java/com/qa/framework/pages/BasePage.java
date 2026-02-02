@@ -18,7 +18,7 @@ public class BasePage {
 
         // CHANGE: Increased wait from 10 to 25 seconds
         // This helps handle the network lag on the OrangeHRM demo site
-        this.wait = new WebDriverWait(driver, Duration.ofSeconds(25));
+        this.wait = new WebDriverWait(driver, Duration.ofSeconds(30));
     }
 
     public boolean isDisplayed(By locator) {
