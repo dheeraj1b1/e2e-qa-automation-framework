@@ -12,9 +12,6 @@ public class AdminUserTransaction extends BaseTest {
 
         @Test(description = "Transaction: Login -> Verify Admin Table -> Logout")
         public void testAdminTableVisibilityAndLogout() {
-                // // 1. Open URL (Manually added as per your fix)
-                // DriverManager.getDriver().get("https://opensource-demo.orangehrmlive.com/");
-
                 // 2. Login
                 LoginPage loginPage = new LoginPage();
                 DashboardPage dashboardPage = loginPage.login("Admin", "admin123");

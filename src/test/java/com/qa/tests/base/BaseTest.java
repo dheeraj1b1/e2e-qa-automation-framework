@@ -11,7 +11,7 @@ public class BaseTest {
     @BeforeMethod
     public void setUp() {
         DriverManager.initDriver();
-        // FIX: Navigate to the URL globally for ALL tests
+
         String url = ConfigReader.getProperty("baseUrl");
         if (url != null) {
             getDriver().get(url);

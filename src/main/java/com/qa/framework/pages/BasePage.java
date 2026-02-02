@@ -16,7 +16,6 @@ public class BasePage {
     public BasePage() {
         this.driver = DriverManager.getDriver();
 
-        // CHANGE: Increased wait from 10 to 25 seconds
         // This helps handle the network lag on the OrangeHRM demo site
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(30));
     }

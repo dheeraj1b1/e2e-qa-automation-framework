@@ -15,7 +15,7 @@ public class DriverManager {
     private static final ThreadLocal<WebDriver> driver = new ThreadLocal<>();
 
     public static void initDriver() {
-        // FIX: Use 'getProperty' instead of 'get'
+
         String browser = ConfigReader.getProperty("browser").toLowerCase();
         WebDriver dr = null;
 
@@ -23,7 +23,7 @@ public class DriverManager {
             case "chrome":
                 WebDriverManager.chromedriver().setup();
                 ChromeOptions options = new ChromeOptions();
-                // FIX: Use 'getProperty'
+
                 if (Boolean.parseBoolean(ConfigReader.getProperty("headless"))) {
                     options.addArguments("--headless=new");
                 }
@@ -41,7 +41,6 @@ public class DriverManager {
                 throw new IllegalArgumentException("Unsupported browser: " + browser);
         }
 
-        // FIX: Use 'getProperty'
         dr.manage().timeouts()
                 .implicitlyWait(Duration.ofSeconds(Long.parseLong(ConfigReader.getProperty("implicitWait"))));
         dr.manage().window().maximize();
