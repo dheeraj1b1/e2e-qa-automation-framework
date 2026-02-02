@@ -21,17 +21,4 @@ public class NegativeLoginTest extends BaseTest {
 
         Assert.assertTrue(isErrorDisplayed, "Error message should be displayed for invalid login.");
     }
-
-    @Test(description = "Intentionally failing test to verify Screenshot generation")
-    public void verifyScreenshotFeature() {
-        LoginPage loginPage = new LoginPage();
-
-        // 1. Try to login with wrong password
-        loginPage.login("Admin", "WrongPass123");
-
-        // 2. INTENTIONALLY FAIL: Claim that we should be on the Dashboard
-        // This assertion will fail because we are still on the login page
-        Assert.assertTrue(loginPage.getCurrentUrl().contains("dashboard"),
-                "Intentional Failure: We expected dashboard but got login page.");
-    }
 }
