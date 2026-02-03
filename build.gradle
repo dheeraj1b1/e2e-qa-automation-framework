@@ -26,6 +26,10 @@ dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.34'
     annotationProcessor 'org.projectlombok:lombok:1.18.34'
 
+    //API deps
+    implementation 'io.rest-assured:rest-assured:5.4.0'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.16.1'
+
 }
 
 test {
