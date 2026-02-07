@@ -1,5 +1,6 @@
 package com.qa.tests.api;
 
+import com.qa.framework.utils.LoggerUtil; // Import the Logger
 import io.restassured.http.ContentType;
 import io.restassured.module.jsv.JsonSchemaValidator;
 import org.testng.Assert;
@@ -21,6 +22,8 @@ public class ProductsTest extends BaseApiTest {
 
     @Test(priority = 1, description = "POST Login to Generate Token")
     public void testLoginAndGenerateToken() {
+        LoggerUtil.logInfo("API: POST /auth/login - Attempting to generate Auth Token");
+
         // Prepare Login Payload (Standard FakeStoreAPI User)
         Map<String, String> credentials = new HashMap<>();
         credentials.put("username", "johnd");
@@ -37,11 +40,13 @@ public class ProductsTest extends BaseApiTest {
                 .body("token", notNullValue())
                 .extract().path("token");
 
-        System.out.println("Generated Auth Token: " + authToken);
+        LoggerUtil.logInfo("API: Auth Token generated successfully");
     }
 
     @Test(priority = 2, description = "POST Create Product & Extract ID", dependsOnMethods = "testLoginAndGenerateToken")
     public void testCreateProduct() {
+        LoggerUtil.logInfo("API: POST /products - Creating a new product");
+
         Map<String, Object> newProduct = new HashMap<>();
         newProduct.put("title", "Senior SDET Automation Item");
         newProduct.put("price", 105.50);
@@ -56,11 +61,11 @@ public class ProductsTest extends BaseApiTest {
                 .post("/products")
                 .then()
                 .log().ifError()
-                .statusCode(201) // FakeStore returns 200 for creation
+                .statusCode(201) // FakeStore returns 201 only
                 .body("title", equalTo("Senior SDET Automation Item"))
                 .extract().path("id");
 
-        System.out.println("Extracted Product ID: " + productId);
+        LoggerUtil.logInfo("API: Product created successfully with ID: " + productId);
         Assert.assertTrue(productId > 0, "Product ID should be generated");
     }
 
@@ -69,6 +74,7 @@ public class ProductsTest extends BaseApiTest {
         // Note: Using ID 1 for stability because FakeStoreAPI doesn't persist new IDs
         // (21+)
         int stableId = 1;
+        LoggerUtil.logInfo("API: GET /products/" + stableId + " - Fetching product and validating JSON Schema");
 
         given()
                 .header("Authorization", "Bearer " + authToken) // Demonstrating Auth Header usage
@@ -78,10 +84,14 @@ public class ProductsTest extends BaseApiTest {
                 .statusCode(200)
                 .body("id", equalTo(stableId))
                 .body(JsonSchemaValidator.matchesJsonSchema(new File(SCHEMA_PATH))); // Schema Validation
+
+        LoggerUtil.logInfo("API: Schema validation passed for Product ID: " + stableId);
     }
 
     @Test(priority = 4, description = "PUT Update Product using Extracted ID", dependsOnMethods = "testCreateProduct")
     public void testUpdateProduct() {
+        LoggerUtil.logInfo("API: PUT /products/" + productId + " - Updating product details");
+
         Map<String, Object> updatedData = new HashMap<>();
         updatedData.put("title", "Updated Product Title");
         updatedData.put("price", 99.99);
@@ -98,10 +108,14 @@ public class ProductsTest extends BaseApiTest {
                 .body("id", equalTo(productId)) // Validating consistency
                 .body("title", equalTo("Updated Product Title"))
                 .body("price", equalTo(99.99f));
+
+        LoggerUtil.logInfo("API: Product updated successfully");
     }
 
     @Test(priority = 5, description = "DELETE Product using Extracted ID", dependsOnMethods = "testCreateProduct")
     public void testDeleteProduct() {
+        LoggerUtil.logInfo("API: DELETE /products/" + productId + " - Deleting product");
+
         // Chaining: Using 'productId' extracted from priority 2
         given()
                 .header("Authorization", "Bearer " + authToken)
@@ -110,19 +124,21 @@ public class ProductsTest extends BaseApiTest {
                 .then()
                 .log().ifError()
                 .statusCode(200);
-        // .body("id", equalTo(productId)); // FakeStore echoes the deleted ID
+
+        LoggerUtil.logInfo("API: Product deleted successfully");
     }
 
     @Test(priority = 6, description = "GET All Products Schema Validation")
     public void testGetAllProductsSchema() {
+        LoggerUtil.logInfo("API: GET /products - Fetching all products to validate list schema");
+
         given()
                 .when()
                 .get("/products")
                 .then()
                 .statusCode(200)
-                // Validate that the array items match the schema
-                // Note: matchesJsonSchema typically validates a single object, so we verify the
-                // list not empty first
                 .body("size()", greaterThan(0));
+
+        LoggerUtil.logInfo("API: List schema validation passed");
     }
 }

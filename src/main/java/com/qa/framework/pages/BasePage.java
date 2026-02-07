@@ -1,6 +1,7 @@
 package com.qa.framework.pages;
 
 import com.qa.framework.driver.DriverManager;
+import com.qa.framework.utils.LoggerUtil; // Import Logger
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -15,8 +16,6 @@ public class BasePage {
 
     public BasePage() {
         this.driver = DriverManager.getDriver();
-
-        // This helps handle the network lag on the OrangeHRM demo site
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(30));
     }
 
@@ -33,16 +32,20 @@ public class BasePage {
     }
 
     protected void click(By locator) {
+        LoggerUtil.logInfo("Clicking element: " + locator); // Log action
         wait.until(ExpectedConditions.elementToBeClickable(locator)).click();
     }
 
     protected void type(By locator, String text) {
+        LoggerUtil.logInfo("Typing '" + text + "' into: " + locator); // Log action
         WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
         element.clear();
         element.sendKeys(text);
     }
 
     protected String getText(By locator) {
-        return wait.until(ExpectedConditions.visibilityOfElementLocated(locator)).getText();
+        String text = wait.until(ExpectedConditions.visibilityOfElementLocated(locator)).getText();
+        LoggerUtil.logInfo("Retrieved text: '" + text + "' from: " + locator); // Log action
+        return text;
     }
 }
