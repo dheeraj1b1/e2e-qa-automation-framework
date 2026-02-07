@@ -15,7 +15,9 @@ dependencies {
     implementation 'io.github.bonigarcia:webdrivermanager:5.9.2'
 
     // API Automation
-    implementation 'io.rest-assured:rest-assured:5.5.0'
+    implementation 'io.rest-assured:rest-assured:5.4.0'
+    implementation 'io.rest-assured:json-schema-validator:5.4.0' // Added for Schema Validation
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.16.1'
 
     // Test Runner
     implementation 'org.testng:testng:7.10.2'
@@ -25,16 +27,16 @@ dependencies {
     implementation 'org.slf4j:slf4j-simple:2.0.16'
     compileOnly 'org.projectlombok:lombok:1.18.34'
     annotationProcessor 'org.projectlombok:lombok:1.18.34'
-
 }
 
 test {
     useTestNG() {
-        // This tells Gradle: "Don't just scan for files, use my suite file!"
-        suites 'src/test/resources/testng.xml'
+        if (project.hasProperty('suite')) {
+            suites file(project.property('suite'))
+        } else {
+            suites 'src/test/resources/testng.xml'
+        }
     }
-    
-    // Optional: Shows nice output in the terminal
     testLogging {
         events "PASSED", "FAILED", "SKIPPED"
     }
