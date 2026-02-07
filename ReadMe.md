@@ -69,73 +69,74 @@ e2e-qa-automation-framework/
 │
 ├── reports/             # Generated HTML Reports (Git Ignored)
 └── build.gradle         # Dependencies & Task Configuration
-⚡ How to Run Tests
-The framework uses Gradle Properties (-P) to switch suites dynamically. This allows precise control over which layer (UI vs API) is executed.
 
-1. Default Execution (UI Suite)
+
+## ⚡ How to Run Tests
+
+The framework uses **Gradle Properties (-P)** to switch suites dynamically. This allows precise control over which layer (UI vs API) is executed.
+
+### **1. Default Execution (UI Suite)**
 If no suite is specified, the framework defaults to running the UI Suite.
 
-Bash
+```bash
 ./gradlew clean test
-Runs: Selenium Tests
+```
 
-Report: reports/UI_ExtentReport.html
+- **Runs:** Selenium Tests
+- **Report:** `reports/UI_ExtentReport.html`
 
-2. Run UI Tests Explicitly
+### **2. Run UI Tests Explicitly**
 Executes Selenium tests on the configured browser (default: Chrome).
 
-Bash
+```bash
 ./gradlew clean test -Psuite=ui
-Target Application: OrangeHRM Demo
+```
 
-Report Generated: reports/UI_ExtentReport.html
+- **Target Application:** OrangeHRM Demo
+- **Report Generated:** `reports/UI_ExtentReport.html`
 
-3. Run API Tests Only
+### **3. Run API Tests Only**
 Executes REST Assured tests (Headless/No Browser).
 
-Bash
+```bash
 ./gradlew clean test -Psuite=api
-Target Application: FakeStore API
+```
 
-Report Generated: reports/API_ExtentReport.html
+- **Target Application:** FakeStore API
+- **Report Generated:** `reports/API_ExtentReport.html`
 
-🧪 Scenarios Covered
-UI Scenarios (OrangeHRM)
-Data-Driven Testing (DDT): Valid/Invalid Login scenarios utilizing @DataProvider to test multiple credential sets.
+## 🧪 Scenarios Covered
 
-E2E Transaction: Complete workflow: Login → Admin Panel Navigation → User Search → Logout.
+### **UI Scenarios (OrangeHRM)**
+- **Data-Driven Testing (DDT):** Valid/Invalid Login scenarios utilizing `@DataProvider` to test multiple credential sets.
+- **E2E Transaction:** Complete workflow: Login → Admin Panel Navigation → User Search → Logout.
+- **Negative Testing:** Verification of error messages, field validation, and boundary analysis.
+- **Cross Browser:** Validated on Chrome, Firefox, and Edge browsers.
 
-Negative Testing: Verification of error messages, field validation, and boundary analysis.
+### **API Scenarios (FakeStore)**
+- **Chaining:** Advanced request chaining: POST Create → Extract ID → GET / PUT / DELETE using the extracted ID.
+- **Auth Handling:** Login flow to generate Bearer Token → Use Token in subsequent authenticated requests.
+- **Schema Validation:** Automated JSON response validation against `product-schema.json`.
+- **CRUD Lifecycle:** Full Create, Read, Update, Delete verification cycle.
 
-Cross Browser: Validated on Chrome, Firefox, and Edge browsers.
+## 📊 Reporting
 
-API Scenarios (FakeStore)
-Chaining: Advanced request chaining: POST Create → Extract ID → GET / PUT / DELETE using the extracted ID.
+The framework produces rich HTML Dashboards (**Extent Reports**) designed for clarity and quick debugging:
 
-Auth Handling: Login flow to generate Bearer Token → Use Token in subsequent authenticated requests.
+- **Pass/Fail Charts:** Visual breakdown of execution status.
+- **Execution Time:** Detailed duration tracking for every test step.
+- **Smart Screenshots:** Automatically captures and attaches screenshots only when a UI test fails.
+- **API Logs:** Request methods, Endpoints, and Response Status codes are logged cleanly in the report without clutter.
 
-Schema Validation: Automated JSON response validation against product-schema.json.
+## 🔮 Future Roadmap
 
-CRUD Lifecycle: Full Create, Read, Update, Delete verification cycle.
+- **Database Testing:** JDBC integration for Data Integrity validation.
+- **CI/CD Pipeline:** Jenkins/GitHub Actions workflow (YAML) for automated triggers.
+- **Containerization:** Docker support for Selenium Grid execution.
 
-📊 Reporting
-The framework produces rich HTML Dashboards (Extent Reports) designed for clarity and quick debugging:
+---
 
-Pass/Fail Charts: Visual breakdown of execution status.
+## 👤 Author
 
-Execution Time: Detailed duration tracking for every test step.
-
-Smart Screenshots: Automatically captures and attaches screenshots only when a UI test fails.
-
-API Logs: Request methods, Endpoints, and Response Status codes are logged cleanly in the report without clutter.
-
-🔮 Future Roadmap
-Database Testing: JDBC integration for Data Integrity validation.
-
-CI/CD Pipeline: Jenkins/GitHub Actions workflow (YAML) for automated triggers.
-
-Containerization: Docker support for Selenium Grid execution.
-
-👤 Author
- Dheeraj B
-SDET / Software Qaulity Engineer
+**Dheeraj B**  
+*SDET / Software Quality Engineer*
