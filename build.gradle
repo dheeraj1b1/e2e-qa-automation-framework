@@ -30,14 +30,31 @@ dependencies {
 }
 
 test {
+    // 1. Capture the suite (default to 'ui')
+    def suiteVar = project.hasProperty('suite') ? project.property('suite') : 'ui'
+
+    // 2. Pass this variable to Java (Crucial Step!)
+    systemProperty "suiteType", suiteVar
+
     useTestNG() {
-        if (project.hasProperty('suite')) {
-            suites file(project.property('suite'))
+        if (suiteVar == 'api') {
+            suites 'src/test/resources/testng-api.xml'
+        } else if (suiteVar == 'ui') {
+            suites 'src/test/resources/testng-ui.xml'
         } else {
-            suites 'src/test/resources/testng.xml'
+            suites suiteVar
         }
     }
+    
+    doFirst {
+        println "---------------------------------------"
+        println " STARTING EXECUTION: " + suiteVar.toUpperCase() + " SUITE "
+        println " REPORT: reports/" + suiteVar.toUpperCase() + "_ExtentReport.html"
+        println "---------------------------------------"
+    }
+
     testLogging {
         events "PASSED", "FAILED", "SKIPPED"
+        showStandardStreams = true
     }
 }

@@ -12,11 +12,16 @@ out/
 .project
 bin/
 
-# Ignore Generated Reports (Fixes the 40% HTML issue)
+# Ignore Generated Reports
 reports/
 logs/
 test-output/
 extent-config.xml
+
+# Logs
+logs/
+*.log
+test-output/
 
 # Ignore System files
 .DS_Store

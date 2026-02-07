@@ -13,23 +13,26 @@ public class ExtentReportManager {
 
     public static ExtentReports initReports() {
         if (extent == null) {
-            String path = System.getProperty("user.dir") + "/reports"; // Folder path
+            // 1. Get the Suite Type from Gradle (passed via systemProperty)
+            String suiteType = System.getProperty("suiteType", "UI").toUpperCase();
+
+            String path = System.getProperty("user.dir") + "/reports";
             File outputDir = new File(path);
 
-            // 1. Check if folder exists, if not, create it!
             if (!outputDir.exists()) {
                 outputDir.mkdirs();
             }
 
-            // 2. Attach the report file path
-            ExtentSparkReporter sparkReporter = new ExtentSparkReporter(path + "/ExtentReport.html");
+            // 2. Dynamic File Name (e.g., API_ExtentReport.html or UI_ExtentReport.html)
+            ExtentSparkReporter sparkReporter = new ExtentSparkReporter(path + "/" + suiteType + "_ExtentReport.html");
 
             sparkReporter.config().setTheme(Theme.STANDARD);
-            sparkReporter.config().setReportName("Automation Test Results");
-            sparkReporter.config().setDocumentTitle("QA Framework Report");
+            sparkReporter.config().setReportName(suiteType + " Test Results"); // Dynamic Name
+            sparkReporter.config().setDocumentTitle(suiteType + " Automation Report");
 
             extent = new ExtentReports();
             extent.attachReporter(sparkReporter);
+            extent.setSystemInfo("Suite Type", suiteType); // Add to report info
             extent.setSystemInfo("OS", System.getProperty("os.name"));
             extent.setSystemInfo("Java Version", System.getProperty("java.version"));
         }
