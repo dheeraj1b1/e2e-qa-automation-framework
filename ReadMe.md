@@ -128,12 +128,6 @@ The framework produces rich HTML Dashboards (**Extent Reports**) designed for cl
 - **Smart Screenshots:** Automatically captures and attaches screenshots only when a UI test fails.
 - **API Logs:** Request methods, Endpoints, and Response Status codes are logged cleanly in the report without clutter.
 
-## 🔮 Future Roadmap
-
-- **Database Testing:** JDBC integration for Data Integrity validation.
-- **CI/CD Pipeline:** Jenkins/GitHub Actions workflow (YAML) for automated triggers.
-- **Containerization:** Docker support for Selenium Grid execution.
-
 ---
 
 ## 👤 Author
