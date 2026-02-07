@@ -2,6 +2,7 @@ package com.qa.framework.listeners;
 
 import com.aventstack.extentreports.MediaEntityBuilder;
 import com.aventstack.extentreports.Status;
+import com.qa.framework.driver.DriverManager;
 import com.qa.framework.utils.ExtentReportManager;
 import com.qa.framework.utils.ScreenshotUtil;
 import org.testng.ITestContext;
@@ -35,13 +36,15 @@ public class TestListener implements ITestListener {
         ExtentReportManager.getTest().log(Status.FAIL, "Test Failed");
         ExtentReportManager.getTest().log(Status.FAIL, result.getThrowable());
 
-        // --- SCREENSHOT IMPLEMENTATION ---
-        try {
-            String screenshot = ScreenshotUtil.getScreenshot();
-            ExtentReportManager.getTest().fail("Screenshot of Failure",
-                    MediaEntityBuilder.createScreenCaptureFromBase64String(screenshot).build());
-        } catch (Exception e) {
-            ExtentReportManager.getTest().log(Status.WARNING, "Failed to attach screenshot: " + e.getMessage());
+        // FIX: Only take screenshot if Driver is active (UI Tests)
+        if (DriverManager.getDriver() != null) {
+            try {
+                String screenshot = ScreenshotUtil.getScreenshot();
+                ExtentReportManager.getTest().fail("Screenshot of Failure",
+                        MediaEntityBuilder.createScreenCaptureFromBase64String(screenshot).build());
+            } catch (Exception e) {
+                ExtentReportManager.getTest().log(Status.WARNING, "Failed to attach screenshot: " + e.getMessage());
+            }
         }
     }
 
