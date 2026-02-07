@@ -76,6 +76,7 @@ e2e-qa-automation-framework/
 The framework uses **Gradle Properties (-P)** to switch suites dynamically. This allows precise control over which layer (UI vs API) is executed.
 
 ### **1. Default Execution (UI Suite)**
+
 If no suite is specified, the framework defaults to running the UI Suite.
 
 ```bash
@@ -86,6 +87,7 @@ If no suite is specified, the framework defaults to running the UI Suite.
 - **Report:** `reports/UI_ExtentReport.html`
 
 ### **2. Run UI Tests Explicitly**
+
 Executes Selenium tests on the configured browser (default: Chrome).
 
 ```bash
@@ -96,6 +98,7 @@ Executes Selenium tests on the configured browser (default: Chrome).
 - **Report Generated:** `reports/UI_ExtentReport.html`
 
 ### **3. Run API Tests Only**
+
 Executes REST Assured tests (Headless/No Browser).
 
 ```bash
