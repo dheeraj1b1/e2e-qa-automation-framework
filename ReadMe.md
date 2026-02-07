@@ -69,7 +69,9 @@ e2e-qa-automation-framework/
 │
 ├── reports/             # Generated HTML Reports (Git Ignored)
 └── build.gradle         # Dependencies & Task Configuration
+```
 
+---
 
 ## ⚡ How to Run Tests
 
