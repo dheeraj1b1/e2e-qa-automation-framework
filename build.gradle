@@ -36,15 +36,28 @@ test {
     // 2. Pass this variable to Java (Crucial Step!)
     systemProperty "suiteType", suiteVar
 
-    useTestNG() {
-        if (suiteVar == 'api') {
-            suites 'src/test/resources/testng-api.xml'
-        } else if (suiteVar == 'ui') {
-            suites 'src/test/resources/testng-ui.xml'
-        } else {
-            suites suiteVar
+useTestNG() {
+        // Check for the -Psuite property passed from command line
+        if (project.hasProperty('suite')) {
+            def suite = project.property('suite')
+            
+            if (suite == 'api') {
+                // The old FakeStore tests
+                suites 'src/test/resources/testng-api.xml'
+                systemProperty "suiteType", "API"
+            } else if (suite == 'ui') {
+                // The existing UI tests
+                suites 'src/test/resources/testng-ui.xml'
+                systemProperty "suiteType", "UI"
+            } else if (suite == 'api-ci') {
+                // NEW: The ReqRes CI-Safe tests
+                suites 'src/test/resources/testng-reqres.xml'
+                systemProperty "suiteType", "ReqRes_API"
+            }
         }
     }
+    // Propagate system properties to the test JVM
+    systemProperties(System.getProperties())
     
     doFirst {
         println "---------------------------------------"

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="ReqRes API Automation Suite" parallel="tests" thread-count="1">
+
+    <listeners>
+        <listener class-name="com.qa.framework.listeners.TestListener"/>
+    </listeners>
+
+    <test name="ReqRes User Tests">
+        <classes>
+            <class name="com.qa.tests.reqres.ReqResUserTest"/>
+        </classes>
+    </test>
+</suite>

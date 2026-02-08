@@ -2,6 +2,7 @@ pipeline {
     agent any
 
     environment {
+        // Required for UI tests to run on Linux (Headless Chrome)
         HEADLESS = 'true'
     }
 
@@ -18,21 +19,20 @@ pipeline {
             }
         }
 
-        stage('Run API Tests') {
+        stage('Run ReqRes API Tests') {
             steps {
-                echo 'Starting API Test Suite...'
-                // --- UPDATE: catchError allows the pipeline to continue if this fails ---
-                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
-                    sh './gradlew clean test -Psuite=api'
-                }
-                // -----------------------------------------------------------------------
+                echo 'Starting ReqRes API Test Suite (CI-Safe)...'
+                // Runs the new AWS-safe API tests. 
+                // Uses 'clean' to wipe previous results.
+                sh './gradlew clean test -Psuite=api-ci'
             }
         }
 
         stage('Run UI Tests') {
             steps {
                 echo 'Starting UI Test Suite...'
-                // The UI tests will now run even if API tests turned red!
+                // Runs UI tests. Note: We do NOT use 'clean' here 
+                // so we don't accidentally delete the API report generated above.
                 sh './gradlew test -Psuite=ui'
             }
         }
@@ -41,15 +41,20 @@ pipeline {
     post {
         always {
             echo 'Archiving Extent Reports...'
+            
+            // Archives all HTML files in the reports folder
             archiveArtifacts artifacts: 'reports/*.html', fingerprint: true
+            
+            // Publishes the dashboard with the NEW report names
             publishHTML(target: [
                 allowMissing: false,
                 alwaysLinkToLastBuild: true,
                 keepAll: true,
                 reportDir: 'reports',
-                reportFiles: 'API_ExtentReport.html, UI_ExtentReport.html',
+                // Make sure these match the filenames your framework generates!
+                reportFiles: 'ReqRes_API_ExtentReport.html, UI_ExtentReport.html',
                 reportName: 'Automation Reports',
-                reportTitles: 'API Results, UI Results'
+                reportTitles: 'ReqRes API Results, UI Results'
             ])
         }
     }
