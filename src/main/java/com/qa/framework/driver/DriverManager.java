@@ -24,9 +24,22 @@ public class DriverManager {
                 WebDriverManager.chromedriver().setup();
                 ChromeOptions options = new ChromeOptions();
 
-                if (Boolean.parseBoolean(ConfigReader.getProperty("headless"))) {
+                // LOGIC UPDATE: Check both Config file AND Jenkins Environment Variable
+                String headlessEnv = System.getenv("HEADLESS");
+                boolean isHeadless = Boolean.parseBoolean(ConfigReader.getProperty("headless"))
+                        || (headlessEnv != null && headlessEnv.equals("true"));
+
+                if (isHeadless) {
                     options.addArguments("--headless=new");
+
+                    // CRITICAL FLAGS FOR AWS/LINUX SERVER STABILITY
+                    options.addArguments("--no-sandbox"); // Bypass OS security model (required on some Linux
+                                                          // environments)
+                    options.addArguments("--disable-dev-shm-usage"); // Prevents crash on limited memory (t2.micro)
+                    options.addArguments("--disable-gpu"); // Disables GPU hardware acceleration
+                    options.addArguments("--window-size=1920,1080"); // Ensures elements are visible/clickable
                 }
+
                 dr = new ChromeDriver(options);
                 break;
             case "firefox":
@@ -41,11 +54,14 @@ public class DriverManager {
                 throw new IllegalArgumentException("Unsupported browser: " + browser);
         }
 
-        dr.manage().timeouts()
-                .implicitlyWait(Duration.ofSeconds(Long.parseLong(ConfigReader.getProperty("implicitWait"))));
-        dr.manage().window().maximize();
-
-        driver.set(dr);
+        // Add a null check before setting timeouts to avoid NullPointerException if
+        // driver creation fails
+        if (dr != null) {
+            dr.manage().timeouts()
+                    .implicitlyWait(Duration.ofSeconds(Long.parseLong(ConfigReader.getProperty("implicitWait"))));
+            dr.manage().window().maximize();
+            driver.set(dr);
+        }
     }
 
     public static WebDriver getDriver() {
