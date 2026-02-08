@@ -5,8 +5,6 @@ pipeline {
         HEADLESS = 'true'
     }
 
-    // REMOVED THE 'tools' SECTION COMPLETELY
-    
     stages {
         stage('Checkout') {
             steps {
@@ -23,13 +21,18 @@ pipeline {
         stage('Run API Tests') {
             steps {
                 echo 'Starting API Test Suite...'
-                sh './gradlew clean test -Psuite=api'
+                // --- UPDATE: catchError allows the pipeline to continue if this fails ---
+                catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') {
+                    sh './gradlew clean test -Psuite=api'
+                }
+                // -----------------------------------------------------------------------
             }
         }
 
         stage('Run UI Tests') {
             steps {
                 echo 'Starting UI Test Suite...'
+                // The UI tests will now run even if API tests turned red!
                 sh './gradlew test -Psuite=ui'
             }
         }
