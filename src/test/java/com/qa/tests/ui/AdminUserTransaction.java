@@ -1,6 +1,5 @@
 package com.qa.tests.ui;
 
-import com.qa.framework.driver.DriverManager;
 import com.qa.framework.pages.AdminPage;
 import com.qa.framework.pages.DashboardPage;
 import com.qa.framework.pages.LoginPage;

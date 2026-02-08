@@ -9,20 +9,34 @@ import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
 
+/**
+ * TestNG listener integrating ExtentReports and screenshots on failures.
+ *
+ * Design notes:
+ * - Uses the TestNG listener (observer) pattern to react to test lifecycle
+ * events
+ * without polluting test logic with reporting concerns (Separation of
+ * Concerns).
+ * - Responsible for initializing and flushing reports and attaching artifacts
+ * (screenshots) when UI-driven tests fail.
+ */
 public class TestListener implements ITestListener {
 
     @Override
     public void onStart(ITestContext context) {
+        // Initialize reporting infrastructure before any tests run
         ExtentReportManager.initReports();
     }
 
     @Override
     public void onFinish(ITestContext context) {
+        // Ensure all report buffers are written
         ExtentReportManager.flushReports();
     }
 
     @Override
     public void onTestStart(ITestResult result) {
+        // Create a logical test entry in the report for each TestNG test method
         ExtentReportManager.createTest(result.getMethod().getMethodName());
     }
 
@@ -36,7 +50,7 @@ public class TestListener implements ITestListener {
         ExtentReportManager.getTest().log(Status.FAIL, "Test Failed");
         ExtentReportManager.getTest().log(Status.FAIL, result.getThrowable());
 
-        // FIX: Only take screenshot if Driver is active (UI Tests)
+        // Attach a screenshot only if a WebDriver was created for this thread
         if (DriverManager.getDriver() != null) {
             try {
                 String screenshot = ScreenshotUtil.getScreenshot();

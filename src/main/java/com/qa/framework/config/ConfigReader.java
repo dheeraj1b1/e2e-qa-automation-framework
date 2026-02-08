@@ -4,27 +4,41 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
+/**
+ * Simple configuration reader.
+ *
+ * Behavior & precedence:
+ * 1. System properties (e.g. `-Dbrowser=firefox`) take highest precedence.
+ * 2. If not provided, values are read from
+ * `src/main/resources/config.properties`.
+ *
+ * Design notes:
+ * - The class uses a static initializer to load configuration once per JVM.
+ * - This keeps runtime access fast via `getProperty()` while still allowing
+ * overrides via system properties and environment variables as needed.
+ */
 public class ConfigReader {
     private static Properties properties;
 
     static {
-        try {
-            String path = "src/main/resources/config.properties";
-            FileInputStream input = new FileInputStream(path);
-            properties = new Properties();
+        properties = new Properties();
+        String path = "src/main/resources/config.properties";
+        try (FileInputStream input = new FileInputStream(path)) {
             properties.load(input);
-            input.close();
         } catch (IOException e) {
             e.printStackTrace();
-            throw new RuntimeException("Failed to load config.properties");
+            throw new RuntimeException("Failed to load config.properties from: " + path, e);
         }
     }
 
+    /**
+     * Returns a configuration value for `key`.
+     *
+     * First checks JVM system properties, then falls back to the loaded properties
+     * file.
+     */
     public static String getProperty(String key) {
-        // 1. Check if the value is passed via Command Line (-Dbrowser=firefox)
         String value = System.getProperty(key);
-
-        // 2. If not, take it from the file
         if (value == null) {
             value = properties.getProperty(key);
         }

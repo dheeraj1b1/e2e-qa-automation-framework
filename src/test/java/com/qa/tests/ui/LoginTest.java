@@ -4,6 +4,7 @@ import com.qa.framework.driver.DriverManager;
 import com.qa.framework.pages.DashboardPage;
 import com.qa.framework.pages.LoginPage;
 import com.qa.tests.base.BaseTest;
+import com.qa.framework.utils.LoggerUtil;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -25,7 +26,7 @@ public class LoginTest extends BaseTest {
 
         // 3. Validation
         String userName = dashboardPage.getLoggedInUser();
-        System.out.println("Logged in as: " + userName);
+        LoggerUtil.logInfo("Logged in as: " + userName);
 
         Assert.assertNotNull(userName, "User name should be visible!");
         Assert.assertTrue(dashboardPage.isPIMOptionDisplayed(), "PIM Menu should be visible!");

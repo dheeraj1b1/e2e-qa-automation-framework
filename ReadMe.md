@@ -110,6 +110,35 @@ Executes REST Assured tests (Headless/No Browser).
 - **Target Application:** FakeStore API
 - **Report Generated:** `reports/API_ExtentReport.html`
 
+### **4. Run ReqRes API Tests (CI/Cloud Safe)**
+
+Executes the AWS-safe API tests against ReqRes.in (Bypasses Cloudflare blocks).
+
+```bash
+./gradlew clean test -Psuite=api-ci
+```
+
+- **Target Application:** ReqRes.in API
+- **Report Generated:** `reports/ReqRes_API_ExtentReport.html`
+
+### **5. Run Cross-Browser Tests (Firefox/Edge)**
+
+Override the browser setting from the command line to test on different browsers.
+
+Run on Firefox Headless:
+```bash
+./gradlew test -Psuite=ui -Dbrowser=firefox -Dheadless=true
+```
+
+Run on Edge:
+```bash
+./gradlew test -Psuite=ui -Dbrowser=edge
+```
+
+- **Target Application:** OrangeHRM Demo
+- **Available Browsers:** chrome, firefox, edge
+- **Headless Mode:** `-Dheadless=true` for CI environments
+
 ## 🧪 Scenarios Covered
 
 ### **UI Scenarios (OrangeHRM)**
@@ -117,6 +146,13 @@ Executes REST Assured tests (Headless/No Browser).
 - **E2E Transaction:** Complete workflow: Login → Admin Panel Navigation → User Search → Logout.
 - **Negative Testing:** Verification of error messages, field validation, and boundary analysis.
 - **Cross Browser:** Validated on Chrome, Firefox, and Edge browsers.
+
+### **ReqRes API Scenarios (CI/Cloud Safe)**
+- **CRUD Lifecycle:** Complete Create → Read → Update (PUT & PATCH) → Delete flow using dynamic IDs.
+- **Negative Testing:** Validates `404 Not Found` handling for non-existent resources.
+- **Schema Validation:** Ensures JSON response structure matches `reqres-user-schema.json`.
+- **Authentication:** Verifies the Registration flow (`POST /register`) and token generation.
+- **Smoke Tests:** Validates list retrieval with custom User-Agent headers.
 
 ### **API Scenarios (FakeStore)**
 - **Chaining:** Advanced request chaining: POST Create → Extract ID → GET / PUT / DELETE using the extracted ID.
