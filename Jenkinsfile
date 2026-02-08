@@ -2,7 +2,6 @@ pipeline {
     agent any
 
     environment {
-        // Required for UI tests to run on Linux (Headless Chrome)
         HEADLESS = 'true'
     }
 
@@ -13,8 +12,11 @@ pipeline {
             }
         }
 
-        stage('Setup Permissions') {
+        stage('Clean Workspace') {
             steps {
+                // Wipe the reports directory clean before starting
+                // This prevents 'Ghost Reports' from previous builds appearing
+                sh 'rm -rf reports/*' 
                 sh 'chmod +x ./gradlew'
             }
         }
@@ -22,8 +24,7 @@ pipeline {
         stage('Run ReqRes API Tests') {
             steps {
                 echo 'Starting ReqRes API Test Suite (CI-Safe)...'
-                // Runs the new AWS-safe API tests. 
-                // Uses 'clean' to wipe previous results.
+                // Run only the API-CI suite
                 sh './gradlew clean test -Psuite=api-ci'
             }
         }
@@ -31,8 +32,7 @@ pipeline {
         stage('Run UI Tests') {
             steps {
                 echo 'Starting UI Test Suite...'
-                // Runs UI tests. Note: We do NOT use 'clean' here 
-                // so we don't accidentally delete the API report generated above.
+                // Run only the UI suite (without 'clean' to preserve API report)
                 sh './gradlew test -Psuite=ui'
             }
         }
@@ -42,16 +42,16 @@ pipeline {
         always {
             echo 'Archiving Extent Reports...'
             
-            // Archives all HTML files in the reports folder
-            archiveArtifacts artifacts: 'reports/*.html', fingerprint: true
+            // 1. Archive ONLY the new reports (ignore old ones if any)
+            archiveArtifacts artifacts: 'reports/ReqRes_API_ExtentReport.html, reports/UI_ExtentReport.html', fingerprint: true
             
-            // Publishes the dashboard with the NEW report names
+            // 2. Publish Dashboard
             publishHTML(target: [
                 allowMissing: false,
                 alwaysLinkToLastBuild: true,
                 keepAll: true,
                 reportDir: 'reports',
-                // Make sure these match the filenames your framework generates!
+                // Explicitly list ONLY the files we just generated
                 reportFiles: 'ReqRes_API_ExtentReport.html, UI_ExtentReport.html',
                 reportName: 'Automation Reports',
                 reportTitles: 'ReqRes API Results, UI Results'
