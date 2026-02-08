@@ -42,19 +42,29 @@ pipeline {
         always {
             echo 'Archiving Extent Reports...'
             
-            // 1. Archive ONLY the new reports (ignore old ones if any)
-            archiveArtifacts artifacts: 'reports/ReqRes_API_ExtentReport.html, reports/UI_ExtentReport.html', fingerprint: true
+            // 1. Archive the raw files so they are downloadable
+            archiveArtifacts artifacts: 'reports/*.html', fingerprint: true
             
-            // 2. Publish Dashboard
+            // 2. Publish API Report (Tab 1)
             publishHTML(target: [
-                allowMissing: false,
+                allowMissing: true,
                 alwaysLinkToLastBuild: true,
                 keepAll: true,
                 reportDir: 'reports',
-                // Explicitly list ONLY the files we just generated
-                reportFiles: 'ReqRes_API_ExtentReport.html, UI_ExtentReport.html',
-                reportName: 'Automation Reports',
-                reportTitles: 'ReqRes API Results, UI Results'
+                reportFiles: 'ReqRes_API_ExtentReport.html', // Specific File
+                reportName: 'API_Test_Results',              // Unique Name for Sidebar
+                reportTitles: 'ReqRes API Execution Report'
+            ])
+
+            // 3. Publish UI Report (Tab 2)
+            publishHTML(target: [
+                allowMissing: true,
+                alwaysLinkToLastBuild: true,
+                keepAll: true,
+                reportDir: 'reports',
+                reportFiles: 'UI_ExtentReport.html',         // Specific File
+                reportName: 'UI_Test_Results',               // Unique Name for Sidebar
+                reportTitles: 'UI Automation Execution Report'
             ])
         }
     }
