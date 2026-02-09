@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Database Validation Suite" parallel="tests" thread-count="1">
+
+    <listeners>
+        <listener class-name="com.qa.framework.listeners.TestListener"/>
+    </listeners>
+
+    <test name="MySQL Data Integrity Tests">
+        <classes>
+            <class name="com.qa.tests.db.DBValidationTest"/>
+        </classes>
+    </test>
+</suite>

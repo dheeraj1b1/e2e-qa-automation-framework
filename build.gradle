@@ -27,6 +27,7 @@ dependencies {
     implementation 'org.slf4j:slf4j-simple:2.0.16'
     compileOnly 'org.projectlombok:lombok:1.18.34'
     annotationProcessor 'org.projectlombok:lombok:1.18.34'
+    implementation 'mysql:mysql-connector-java:8.0.33'
 }
 
 test {
@@ -53,6 +54,12 @@ useTestNG() {
                 // NEW: The ReqRes CI-Safe tests
                 suites 'src/test/resources/testng-reqres.xml'
                 systemProperty "suiteType", "ReqRes_API"
+            }else if (suite == 'db') {
+                // NEW: DB Suite
+                suites 'src/test/resources/testng-db.xml'
+                systemProperty "suiteType", "DB_Validation"
+            } else {
+                throw new GradleException("Invalid suite specified: " + suite + ". Use -Psuite=ui, -Psuite=api, -Psuite=api-ci, or -Psuite=db")
             }
         }
     }
