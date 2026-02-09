@@ -1,6 +1,5 @@
 name: Hybrid Automation Framework CI
 
-# Trigger: Run on every push to the main branch
 on:
   push:
     branches: [ "main" ]
@@ -48,16 +47,17 @@ jobs:
     - name: Seed Database
       run: |
         sudo apt-get install -y mysql-client
+        # Wait for MySQL to be ready (built-in service health check handles most of this)
         mysql -h 127.0.0.1 -P 3306 -u qa_user -pqa_password automation_db < src/test/resources/db_seed.sql
 
     # ---------------------------------------------------
     # TEST EXECUTION STAGES
     # ---------------------------------------------------
 
-    # Suite 1: Normal API (Legacy/FakeStore)
-    - name: Run Normal API Tests
-      run: ./gradlew test -Psuite=api
-      continue-on-error: true # Continues even if FakeStore is flaky
+    # Suite 1: Normal API (Legacy/FakeStore) - EXCLUDED AS REQUESTED
+    # - name: Run Normal API Tests
+    #   run: ./gradlew test -Psuite=api
+    #   continue-on-error: true 
 
     # Suite 2: CI API (ReqRes - Cloud Safe)
     - name: Run CI API Tests (ReqRes)
@@ -73,6 +73,7 @@ jobs:
     - name: Run DB Validation Tests
       run: ./gradlew test -Psuite=db
       env:
+        # Use 127.0.0.1 for GitHub Actions Service Containers
         DB_URL: jdbc:mysql://127.0.0.1:3306/automation_db
         DB_USER: qa_user
         DB_PASSWORD: qa_password
