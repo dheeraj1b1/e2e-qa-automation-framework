@@ -1,0 +1,90 @@
+name: Hybrid Automation Framework CI
+
+# Trigger: Run on every push to the main branch
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test-execution-suite:
+    runs-on: ubuntu-latest
+
+    # Service Container: Spins up a temporary MySQL DB inside GitHub
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: automation_db
+          MYSQL_USER: qa_user
+          MYSQL_PASSWORD: qa_password
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
+    steps:
+    # 1. Checkout Code
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    # 2. Set up Java 17
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    # 3. Grant Permissions to Gradle
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
+    # 4. Initialize Database (Inject the Seed Data)
+    - name: Seed Database
+      run: |
+        sudo apt-get install -y mysql-client
+        mysql -h 127.0.0.1 -P 3306 -u qa_user -pqa_password automation_db < src/test/resources/db_seed.sql
+
+    # ---------------------------------------------------
+    # TEST EXECUTION STAGES
+    # ---------------------------------------------------
+
+    # Suite 1: Normal API (Legacy/FakeStore)
+    - name: Run Normal API Tests
+      run: ./gradlew test -Psuite=api
+      continue-on-error: true # Continues even if FakeStore is flaky
+
+    # Suite 2: CI API (ReqRes - Cloud Safe)
+    - name: Run CI API Tests (ReqRes)
+      run: ./gradlew clean test -Psuite=api-ci
+
+    # Suite 3: UI Tests (Headless Mode)
+    - name: Run UI Tests (Selenium)
+      run: ./gradlew test -Psuite=ui
+      env:
+        HEADLESS: "true" # Forces Headless Mode in CI
+
+    # Suite 4: Database Validation
+    - name: Run DB Validation Tests
+      run: ./gradlew test -Psuite=db
+      env:
+        DB_URL: jdbc:mysql://127.0.0.1:3306/automation_db
+        DB_USER: qa_user
+        DB_PASSWORD: qa_password
+
+    # ---------------------------------------------------
+    # REPORTING
+    # ---------------------------------------------------
+    
+    # 5. Upload Extent Reports as Artifacts
+    - name: Upload Test Reports
+      if: always() # Runs even if a test fails
+      uses: actions/upload-artifact@v4
+      with:
+        name: Automation-Extent-Reports
+        path: reports/*.html
