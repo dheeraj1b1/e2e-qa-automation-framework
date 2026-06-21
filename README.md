@@ -71,7 +71,7 @@ The framework uses a **layered architecture** that strictly separates framework 
 - **`ThreadLocal<WebDriver>`** — Enables thread-safe parallel test execution without shared state
 - **Factory Pattern in DriverManager** — Cross-browser logic (Chrome/Firefox/Edge/Headless) is centralized and configurable via `-Dbrowser=`
 - **Suite-based Gradle tasks** — Each test layer is invoked with `-Psuite=ui|api|api-ci|db`, preventing layer interference
-- **Listener-based reporting** — `TestListener` hooks into TestNG lifecycle to auto-capture screenshots on UI failure only (API tests are skipped)
+- **Listener-based reporting** — `TestListener` hooks into TestNG lifecycle to auto-capture screenshots on UI failure only (API tests are excluded)
 
 ---
 
@@ -174,7 +174,7 @@ e2e-qa-automation-framework/
 - Java 17+
 - Gradle (or use the `./gradlew` wrapper)
 - Chrome (default browser) — Firefox/Edge optional
-- MySQL running locally on port `3306` for DB suite
+- MySQL running locally on port `3306` for the DB suite
 
 ### Suite Commands
 
@@ -272,4 +272,4 @@ Reports include:
 
 ## GitHub Topics
 
-`selenium` `java` `testng` `rest-assured` `qa-automation` `automation-testing` `pom` `webdriver` `api-testing` `database-testing` `extentreports` `gradle` `github-actions` `ci-cd` `junit`
+`selenium` `java` `testng` `rest-assured` `qa-automation` `automation-testing` `pom` `webdriver` `api-testing` `database-testing` `extentreports` `gradle` `github-actions` `ci-cd`
